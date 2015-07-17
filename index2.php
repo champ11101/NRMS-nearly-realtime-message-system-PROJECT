@@ -12,13 +12,7 @@
 	<link rel="shortcut  icon" href="NRMS.png">
 
 	<script>
-		
-		var datalist={};
-
-		function test(msg_id){
-			$("#mymodal_body").text(datalist[msg_id]["detail"]);
-        }
-	
+		 
 		$(document).ready(function(){
 			function getNewMsgFromDb(){
 				$.ajax({
@@ -28,30 +22,93 @@
 				})
 				.success(function(result){
 					var obj = jQuery.parseJSON(result);
-					
-					datalist= {};//reset
 
 					if(obj!=''){
 						$("#newMsgBody").empty();
 						$.each(obj, function(key, val) {
-
-							datalist[val["ID"]] = val; //store server data
-
 							var tr = "<tr>";
 							tr = tr + "<td>" + val["send_time"] + "</td>";
 							tr = tr + "<td>" + val["title"] + "</td>";
 							tr = tr + "<td>" + val["from"] + "</td>";
 							tr = tr + "<td>" + val["read_status"] +
-							"&nbsp<button type='button' class='btn btn-info btn-sm' data-toggle='modal' data-target='#myModal' onclick='test(\""+ val["ID"]+ "\")'><span class='glyphicon glyphicon-search' aria-hidden='true'></span></button>" + "</td>";
+							"&nbsp<button type='button' class='btn btn-info btn-sm' data-toggle='modal' data-target='#newMsgModal'><span class='glyphicon glyphicon-search' aria-hidden='true'></span></button>" + "</td>";
 							tr = tr + "</tr>";
 
-							var newtr= $(tr);
-							$('#newMsgTable > tbody:last').append(newtr);		 
-						});
+							var newtr=$(tr);
+							$('#newMsgTable > tbody:last').append(newtr);
+							newtr.find(".btn").click(function(){
+								 $("#mymodal_body").text(val["detail"]);
+								 $("#mymodal_title").text(val["title"]);
+							});
+ 						});
 					}
 				});
 			}
-			setInterval(getNewMsgFromDb,1000);
+
+			function getAllMsgFromDb(){
+				$.ajax({
+					url: "getAllMsg.php",
+					type: "POST",
+					data: ''
+				})
+				.success(function(result){
+					var obj = jQuery.parseJSON(result);
+
+					if(obj!=''){
+						$("#newMsgBody").empty();
+						$.each(obj, function(key, val) {
+							var tr = "<tr>";
+							tr = tr + "<td>" + val["send_time"] + "</td>";
+							tr = tr + "<td>" + val["title"] + "</td>";
+							tr = tr + "<td>" + val["from"] + "</td>";
+							tr = tr + "<td>" + val["read_status"] +
+							"&nbsp<button type='button' class='btn btn-info btn-sm' data-toggle='modal' data-target='#myModal'><span class='glyphicon glyphicon-search' aria-hidden='true'></span></button>" + "</td>";
+							tr = tr + "</tr>";
+
+							var newtr=$(tr);
+							$('#newMsgTable > tbody:last').append(newtr);
+							newtr.find(".btn").click(function(){
+								 $("#mymodal_body").text(val["detail"]);
+								 $("#mymodal_title").text(val["title"]);
+							});
+ 						});
+					}
+				});
+			}
+
+			function getSentMsgFromDb(){
+				$.ajax({
+					url: "getSentMsg.php",
+					type: "POST",
+					data: ''
+				})
+				.success(function(result){
+					var obj = jQuery.parseJSON(result); 
+
+					if(obj!=''){
+						$("#newMsgBody").empty();
+						$.each(obj, function(key, val) {
+							var tr = "<tr>";
+							tr = tr + "<td>" + val["send_time"] + "</td>";
+							tr = tr + "<td>" + val["title"] + "</td>";
+							tr = tr + "<td>" + val["from"] + "</td>";
+							tr = tr + "<td>" + val["read_status"] +
+							"&nbsp<button type='button' class='btn btn-info btn-sm' data-toggle='modal' data-target='#myModal'><span class='glyphicon glyphicon-search' aria-hidden='true'></span></button>" + "</td>";
+							tr = tr + "</tr>";
+
+							var newtr=$(tr);
+							$('#newMsgTable > tbody:last').append(newtr);
+							newtr.find(".btn").click(function(){
+								 $("#mymodal_body").text(val["detail"]);
+								 $("#mymodal_title").text(val["title"]);
+							});
+ 						});
+					}
+				});
+			}
+			setInterval(getNewMsgFromDb,3000);
+			setInterval(getAllMsgFromDb,3000);
+			setInterval(getSentMsgFromDb,3000);
 
 			
 
@@ -89,6 +146,7 @@
 	session_write_close();
 	?> <!--Sign In Checking-->
 
+	<!--Navbar-->
 	<nav class="navbar navbar-default navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -132,12 +190,6 @@
 	<!--Tab Message-->
 	<div class="container-fluid" style="margin-top:80px;">
 		<div class="row">
-			<!--<div class="col-sm-2">
-				<div class="list-group">
-					<a href="#" class="list-group-item list-group-item-info"><span class="badge">3</span>New messages</a>
-  					<a href="#" class="list-group-item list-group-item-info"><span class="badge">42</span>All messages</a>
-				</div>
-			</div>-->
 			<div class="col-sm-2"></div>
 
 			<div class="col-sm-8">
@@ -194,23 +246,57 @@
 		</div>
 	</div>
 
-	<!-- Message Modal -->
+	<!--New Message Modal -->
+	<div class="modal fade" id="newMsgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+	        	<div class="modal-header">
+	            	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                <h4 class="modal-title" id="mymodal_title"></h4>
+	            </div>
+
+	        	<div id="mymodal_body" class="modal-body"></div>
+
+	      		<div id="mymodal_footer" class="modal-footer">
+	        		<button type="button" class="btn btn-primary">Accept</button>
+	        		<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+	      		</div>
+	    	</div>
+	    </div>
+	</div>
+
+	<!--All Message Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 	        	<div class="modal-header">
 	            	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+	                <h4 class="modal-title" id="mymodal_title"></h4>
 	            </div>
 
-	        	<div id="mymodal_body" class="modal-body">
-	      			<p>
-	      				...
-	      			</p>
-	      		</div>
+	        	<div id="mymodal_body" class="modal-body"></div>
 
-	      		<div class="modal-footer">
-	        		<button type="button" class="btn btn-primary">Make as read</button>
+	      		<div id="mymodal_footer" class="modal-footer">
+	        		<button type="button" class="btn btn-primary">Accept</button>
+	        		<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+	      		</div>
+	    	</div>
+	    </div>
+	</div>
+
+	<!--Sent Message Modal -->
+	<div class="modal fade" id="sentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+	        	<div class="modal-header">
+	            	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	                <h4 class="modal-title" id="mymodal_title"></h4>
+	            </div>
+
+	        	<div id="mymodal_body" class="modal-body"></div>
+
+	      		<div id="mymodal_footer" class="modal-footer">
+	        		<button type="button" class="btn btn-primary">Accept</button>
 	        		<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 	      		</div>
 	    	</div>

@@ -41,7 +41,7 @@
 		
 				session_write_close();
 				mysql_close();
-				header("location:index.php");
+				header("location:index2.php");
 			}
 	}
 ?>
