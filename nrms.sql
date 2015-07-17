@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 15, 2015 at 11:43 AM
+-- Generation Time: Jul 17, 2015 at 11:02 AM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -33,18 +33,22 @@ CREATE TABLE IF NOT EXISTS `message` (
   `detail` text NOT NULL,
   `from` varchar(30) NOT NULL,
   `send_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `read_status` enum('read','unread') NOT NULL DEFAULT 'unread'
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  `read_status` enum('read','unread') NOT NULL DEFAULT 'unread',
+  `acceptor` varchar(30) NOT NULL,
+  `accept_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `message`
 --
 
-INSERT INTO `message` (`ID`, `send_to`, `title`, `detail`, `from`, `send_time`, `read_status`) VALUES
-(001, 'Champ', 'เพชรจากต่างดาว', 'เรียนท่านเทพแชมป์ยังงี้ว่า ที่ท่านได้ทำการมอบเพชร20กะรัตให้พวกเราฟรีๆนั้น พวกเราซาบซึ้งใจเป็นอย่างมาก พวกเราจึงอยากมาระบายอารมณ์ว่า "เพชรที่ท่านมอบให้มานั้น เมื่อพวกเรานำไปตรวจสอบ ก็พบว่าเป็นเพชรที่มาจากดาวไซเบอร์ตรอน ซึ่งมีมูลค่ามากมายมหาศาลเกินกว่าจะจินตนาการได้" จึงนึกเกิดความเกรงใจ อยากนำเพชรเม็ดนี้กลับไปคืนท่าน แต่เราก็ยังอยากได้เหมือนกัน ก็เลยขอละกันนะ เท่านี้แหละ แอะๆ', 'Brown', '2015-07-14 10:44:25', 'unread'),
-(002, 'White', 'LP City', 'เนื่องด้วยเมือง LP เป็นเมืองที่มีจำนวนของแซ้บสูงติดอันดับต้นๆของประเทศ จึงขอความร่วมมือทุกฝ่ายช่วยกันจับแซ้บเหล่านี้มาปรับทัศนคติโดยด่วน', 'Champ', '2015-07-14 10:44:25', 'unread'),
-(003, 'Champ', 'How to speak English', 'Arigatougosaimasu', 'John', '2015-07-14 19:20:00', 'unread'),
-(004, 'Champ', 'อยากยืมตังค์ซัก 200', 'hello hello hello hello hello', 'Brown', '2015-07-14 20:53:51', 'unread');
+INSERT INTO `message` (`ID`, `send_to`, `title`, `detail`, `from`, `send_time`, `read_status`, `acceptor`, `accept_time`) VALUES
+(001, 'Champ', 'เพชรจากต่างดาว', 'เรียนท่านเทพแชมป์ยังงี้ว่า ที่ท่านได้ทำการมอบเพชร20กะรัตให้พวกเราฟรีๆนั้น พวกเราซาบซึ้งใจเป็นอย่างมาก พวกเราจึงอยากมาระบายอารมณ์ว่า "เพชรที่ท่านมอบให้มานั้น เมื่อพวกเรานำไปตรวจสอบ ก็พบว่าเป็นเพชรที่มาจากดาวไซเบอร์ตรอน ซึ่งมีมูลค่ามากมายมหาศาลเกินกว่าจะจินตนาการได้" จึงนึกเกิดความเกรงใจ อยากนำเพชรเม็ดนี้กลับไปคืนท่าน แต่เราก็ยังอยากได้เหมือนกัน ก็เลยขอละกันนะ เท่านี้แหละ', 'Brown', '2015-07-17 11:07:10', 'unread', '', '0000-00-00 00:00:00'),
+(002, 'White', 'LP City', 'เนื่องด้วยเมือง LP เป็นเมืองที่มีจำนวนของแซ้บสูงติดอันดับต้นๆของประเทศ จึงขอความร่วมมือทุกฝ่ายช่วยกันจับแซ้บเหล่านี้มาปรับทัศนคติโดยด่วน', 'Champ', '2015-07-14 10:44:25', 'unread', '', '0000-00-00 00:00:00'),
+(003, 'Champ', 'How to speak English', 'Arigatougosaimasu', 'John', '2015-07-14 19:20:00', 'unread', '', '0000-00-00 00:00:00'),
+(004, 'Champ', 'อยากยืมตังค์ซัก 200', 'พอจะมีเงินให้ยืมซัก 200 มั้ย.ย...ย', 'Brown', '2015-07-14 20:53:51', 'unread', '', '0000-00-00 00:00:00'),
+(005, 'Champ', 'test accept time', 'test test test test test test', 'White', '2015-07-17 11:15:31', 'unread', 'Champ', '2015-07-17 13:31:05'),
+(006, 'Champ', 'Owarese Night', 'Owarase Night is a japanese song.', 'John', '2015-07-17 11:17:53', 'unread', '', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -94,7 +98,7 @@ ALTER TABLE `user_account`
 -- AUTO_INCREMENT for table `message`
 --
 ALTER TABLE `message`
-  MODIFY `ID` int(3) unsigned zerofill NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+  MODIFY `ID` int(3) unsigned zerofill NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `user_account`
 --
