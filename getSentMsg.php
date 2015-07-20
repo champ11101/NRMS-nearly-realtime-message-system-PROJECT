@@ -7,7 +7,7 @@
 	mysql_query("SET NAMES UTF8");
 
 	$objDB = mysql_select_db("nrms");
-	$strSQL = "SELECT * FROM message WHERE (send_to ='$s' AND read_status ='unread') ORDER BY send_time DESC";
+	$strSQL = "SELECT * FROM message WHERE sender ='$s' ORDER BY send_time DESC";
 	$objQuery = mysql_query($strSQL) or die (mysql_error());
 	$intNumField = mysql_num_fields($objQuery);
 	$resultArray = array();
