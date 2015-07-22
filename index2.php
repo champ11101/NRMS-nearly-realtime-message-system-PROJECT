@@ -3,13 +3,27 @@
 <head>
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="bootstrap/js/jquery.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 	<title>หน้ารับ-ส่งข้อความ</title>
-	<link rel="shortcut  icon" href="NRMS.png">
+	<link rel="shortcut  icon" href="NRMS2.png">
+
+<?php //Sign In Checking
+    error_reporting(0);
+	session_start();
+
+	if($_SESSION["ID"] == ""){
+		echo "  <br><div align='center'>Please Sign In First !!!</div>";?><br><br>
+			<div align="center">
+				<input type="button" class="btn btn-success" name="go_sign_in" id="go_sign_in" value="Go to sign in page" onclick="window.location='login.html' " />
+			</div>
+		<?php exit();
+	}
+	session_write_close();
+?> <!--Sign In Checking-->
 
 	<script>
 		 
@@ -39,6 +53,7 @@
 							newtr.find(".btn").click(function(){
 								 $("#newMsgModalBody").text(val["detail"]);
 								 $("#newMsgModalTitle").text(val["title"]);
+								 $("#newMsgModalSender").text(val["sender"]);
 							});
  						});
 					}
@@ -83,7 +98,7 @@
 					data: ''
 				})
 				.success(function(result){
-					var obj = jQuery.parseJSON(result); 
+					var obj = jQuery.parseJSON(result);
 
 					if(obj!=''){
 						$("#sentMsgBody").empty();
@@ -95,7 +110,7 @@
 							tr = tr + "<td>" + val["accept_time"] + "</td>";
 							tr = tr + "<td>" + val["acceptor"] + "</td>";
 							tr = tr + "<td>" + val["read_status"] +
-							"&nbsp<button type='button' class='btn btn-info btn-sm' data-toggle='modal' data-target='#sentMsgModal'><span class='glyphicon glyphicon-search' aria-hidden='true'></span></button>" + "</td>";
+							"&nbsp<button type='button' class='btn btn-info btn-sm pull-right' data-toggle='modal' data-target='#sentMsgModal'><span class='glyphicon glyphicon-search' aria-hidden='true'></span></button>" + "</td>";
 							tr = tr + "</tr>";
 
 							var newtr=$(tr);
@@ -108,11 +123,9 @@
 					}
 				});
 			}
-			setInterval(getNewMsgFromDb,3000);
-			setInterval(getAllMsgFromDb,3000);
-			setInterval(getSentMsgFromDb,3000);
-
-			
+			setInterval(getNewMsgFromDb,15000);
+			setInterval(getAllMsgFromDb,15000);
+			setInterval(getSentMsgFromDb,15000);
 
 
 			function badgeMsgCount(){ //Message badge counter function.
@@ -126,30 +139,21 @@
 				document.getElementById("badge_sentmsg").innerHTML =z;
 			}
 			setInterval(badgeMsgCount,1000);
-		})
+
+			function updateMsgStatus(){
+				console.log("Pling");
+			}
+
+		})//End of .ready(function()
 	</script>
-	
 </head>
 
 <body style="background-color:azure">
 
-	<?php //Sign In Checking
-    error_reporting(0);
-	session_start();
-
-	if($_SESSION["ID"] == "")
-	{
-		echo "  <br><div align='center'>Please Sign In First !!!</div>";?><br><br>
-			<div align="center">
-				<input type="button" class="btn btn-success" name="go_sign_in" id="go_sign_in" value="Go to sign in page" onclick="window.location='login.html' " />
-			</div>
-		<?php exit();
-	}
-	session_write_close();
-	?> <!--Sign In Checking-->
+	
 
 	<!--Navbar-->
-	<nav class="navbar navbar-default navbar-fixed-top">
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
 		<div class="container-fluid">
 			<div class="navbar-header">
 
@@ -160,8 +164,8 @@
 					<span class="icon-bar"></span>
 				</button>
 
-				<a class="navbar-brand" href="index.php">
-					<img src="NRMS.png" alt="nrmslogo" width="20px" height="20px">
+				<a class="navbar-brand" href="index2.php">
+					<img src="NRMS2.png" alt="nrmslogo" width="20px" height="20px">
 				</a>
 			</div>
 
@@ -180,9 +184,9 @@
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right pull-center">
-					<div>
+					<div class="pull-right">
 						<p class="navbar-text">Signed in as : <?php echo $_SESSION["name"]; ?></p>
-						<button type="button" class="btn btn-danger btn-xs navbar-btn" onclick="window.location='logout.php'">Sign out</button>
+						<button type="button" class="btn btn-danger btn-xs navbar-btn pull-right" onclick="window.location='logout.php'">Sign out</button>
 					</div>
             	</ul>
 			</div><!--end nav collapse-->
@@ -192,10 +196,9 @@
 	<!--Tab Message-->
 	<div class="container-fluid" style="margin-top:80px;">
 		<div class="row">
-			<div class="col-sm-2"></div>
+			<div class="col-sm-12">
 
-			<div class="col-sm-8">
-				<ul class="nav nav-tabs">
+				<ul class="nav nav-pills">
 					<li class="active"><a data-toggle="tab" href="#new_msg" aria-controls="new_message">New messages <span id="badge_newmsg" class="badge"></span></a></li>
 					<li><a data-toggle="tab" href="#all_msg">Accepted messages <span id="badge_allmsg" class="badge"></span></a></li>
 					<li><a data-toggle="tab" href="#sent_msg">Sent messages <span id="badge_sentmsg" class="badge"></span></a></li>
@@ -204,47 +207,53 @@
 				<div class="tab-content">
 
 					<div id="new_msg" class="tab-pane fade in active">
-						<table class="table table-hover table-striped" id="newMsgTable">
-							<thead>
-								<tr>
-									<th>Time</th>
-									<th>Title</th>
-									<th>From</th>
-									<th>Status</th>
-								</tr>
-							</thead>
-							<tbody id="newMsgBody"></tbody>
-						</table>
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="newMsgTable">
+								<thead>
+									<tr>
+										<th>Time</th>
+										<th>Title</th>
+										<th>From</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody id="newMsgBody"></tbody>
+							</table>
+						</div>
 					</div>
 
 					<div id="all_msg" class="tab-pane fade" >
-						<table class="table table-hover table-striped" id="allMsgTable">
-							<thead>
-								<tr>
-									<th>Time</th>
-									<th>Title</th>
-									<th>From</th>
-									<th>Status</th>
-								</tr>
-							</thead>
-							<tbody id="allMsgBody"></tbody>
-						</table>
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="allMsgTable">
+								<thead>
+									<tr>
+										<th>Time</th>
+										<th>Title</th>
+										<th>From</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody id="allMsgBody"></tbody>
+							</table>
+						</div>
 					</div>
 
 					<div id="sent_msg" class="tab-pane fade">
-						<table class="table table-hover table-striped" id="sentMsgTable">
-							<thead>
-								<tr>
-									<th>Send time</th>
-									<th>Title</th>
-									<th>Send To</th>
-									<th>Accept time</th>
-									<th>Acceptor</th>
-									<th>Status</th>
-								</tr>
-							</thead>
-							<tbody id="sentMsgBody"></tbody>
-						</table>
+						<div class="table-responsive">
+							<table class="table table-hover table-striped" id="sentMsgTable">
+								<thead>
+									<tr>
+										<th>Send time</th>
+										<th>Title</th>
+										<th>Send To</th>
+										<th>Accept time</th>
+										<th>Acceptor</th>
+										<th width="110px">Status</th>
+									</tr>
+								</thead>
+								<tbody id="sentMsgBody"></tbody>
+							</table>
+						</div>	
 					</div>
 				</div><!--end of tab content-->
 			</div>
@@ -260,12 +269,14 @@
 	                <h4 class="modal-title" id="newMsgModalTitle"></h4>
 	            </div>
 
-	        	<div id="newMsgModalBody" class="modal-body"></div>
+	        	<div class="modal-body">
+	        		<div id="newMsgModalBody"></div>
+	        		<div id="newMsgModalSender" class="pull-right"></div>
+	        	</div>
 
-	      		<div id="newMsgModalFooter" class="modal-footer">
-	      			<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-	        		<button type="button" class="btn btn-success">Accept</button>
-	        		
+	      		<div class="modal-footer">
+	      				<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+	        			<button type="button" class="btn btn-success" onclick="updateMsgStatus()">Accept</button>
 	      		</div>
 	    	</div>
 	    </div>
@@ -280,7 +291,9 @@
 	                <h4 class="modal-title" id="allMsgModalTitle"></h4>
 	            </div>
 
-	        	<div id="allMsgModalBody" class="modal-body"></div>
+	        	<div class="modal-body">
+	        		<div id="allMsgModalBody"></div>
+	        	</div>
 
 	      		<div id="allMsgModalFooter" class="modal-footer">
 	      			<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>

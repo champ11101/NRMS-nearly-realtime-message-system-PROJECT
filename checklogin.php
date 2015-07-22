@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="shortcut  icon" href="NRMS.png">
+	<link rel="shortcut  icon" href="NRMS2.png">
 </head>
 <body style="background-color:azure">
 
