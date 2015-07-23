@@ -54,7 +54,7 @@
 								 $("#newMsgModalBody").text(val["detail"]);
 								 $("#newMsgModalTitle").text(val["title"]);
 								 $("#newMsgModalSender").text(val["sender"]);
-								 $("#acptBtn").text(val["ID"]);
+								 $("#acptBtn").val["ID"];
 							});
  						});
 					}
@@ -124,9 +124,9 @@
 					}
 				});
 			}
-			setInterval(getNewMsgFromDb,15000);
-			setInterval(getAllMsgFromDb,30000);
-			setInterval(getSentMsgFromDb,60000);
+			setInterval(getNewMsgFromDb,3000);
+			setInterval(getAllMsgFromDb,3000);
+			setInterval(getSentMsgFromDb,3000);
 
 
 			function badgeMsgCount(){ //Message badge counter function.
