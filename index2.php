@@ -54,6 +54,7 @@
 								 $("#newMsgModalBody").text(val["detail"]);
 								 $("#newMsgModalTitle").text(val["title"]);
 								 $("#newMsgModalSender").text(val["sender"]);
+								 $("#acptBtn").text(val["ID"]);
 							});
  						});
 					}
@@ -124,8 +125,8 @@
 				});
 			}
 			setInterval(getNewMsgFromDb,15000);
-			setInterval(getAllMsgFromDb,15000);
-			setInterval(getSentMsgFromDb,15000);
+			setInterval(getAllMsgFromDb,30000);
+			setInterval(getSentMsgFromDb,60000);
 
 
 			function badgeMsgCount(){ //Message badge counter function.
@@ -140,15 +141,27 @@
 			}
 			setInterval(badgeMsgCount,1000);
 
-			function updateMsgStatus(){
-				console.log("Pling");
-			}
+
+			$("#acptBtn").click(function(ID){
+				var r = confirm("ID message is: " + ID);
+				if (r == true){
+					/*$.ajax({
+						url: "updateMsgStatus.php",
+						type: "POST",
+						data: ''
+					})*/
+					getNewMsgFromDb();
+					getAllMsgFromDb();
+					$("#newMsgModal").modal('hide');
+					alert("Accept successful");
+				}
+			})
 
 		})//End of .ready(function()
 	</script>
 </head>
 
-<body style="background-color:azure">
+<body style="background-color:azure" id="top">
 
 	
 
@@ -256,8 +269,8 @@
 						</div>	
 					</div>
 				</div><!--end of tab content-->
-			</div>
-		</div>
+			</div><!-- End of col-sm-12-->
+		</div><!--End of row-->
 	</div>
 
 	<!--New Message Modal -->
@@ -270,13 +283,13 @@
 	            </div>
 
 	        	<div class="modal-body">
-	        		<div id="newMsgModalBody"></div>
-	        		<div id="newMsgModalSender" class="pull-right"></div>
+	        		<div id="newMsgModalBody"></div><br><br>
+	        		<div id="newMsgModalSender" class="pull-right"></div><br>
 	        	</div>
 
 	      		<div class="modal-footer">
 	      				<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-	        			<button type="button" class="btn btn-success" onclick="updateMsgStatus()">Accept</button>
+	        			<button id="acptBtn" type="button" class="btn btn-success" value="val['ID']">Accept</button>
 	      		</div>
 	    	</div>
 	    </div>
@@ -297,8 +310,7 @@
 
 	      		<div id="allMsgModalFooter" class="modal-footer">
 	      			<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-	        		<button type="button" class="btn btn-warning">Cancel</button>
-	        		
+	        		<button type="button" class="btn btn-warning">Cancel this task</button>
 	      		</div>
 	    	</div>
 	    </div>
@@ -317,7 +329,8 @@
 
 	      		<div id="sentMsgModalFooter" class="modal-footer">
 	      			<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-	        		<button type="button" class="btn btn-success">Edit</button>
+	        		<button type="button" class="btn btn-warning">Edit</button>
+	        		<button type="button" class="btn btn-danger">Delete</button>
 	        		
 	      		</div>
 	    	</div>
