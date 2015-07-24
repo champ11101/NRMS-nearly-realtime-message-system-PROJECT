@@ -21,8 +21,7 @@
 		}
 		array_push($resultArray,$arrCol);
 	}
-	session_write_close();
-	mysql_close($objConnect);
+	
 	
 	echo json_encode($resultArray);
 ?>

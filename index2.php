@@ -27,6 +27,8 @@
 
 	<script>
 		 
+		var _tmp_msgId="";
+
 		$(document).ready(function(){
 			function getNewMsgFromDb(){
 				$.ajax({
@@ -54,7 +56,10 @@
 								 $("#newMsgModalBody").text(val["detail"]);
 								 $("#newMsgModalTitle").text(val["title"]);
 								 $("#newMsgModalSender").text(val["sender"]);
-								 $("#acptBtn").text(val["ID"]);
+								 _tmp_msgId = val["ID"];
+								 //$("#acptBtn").text("Accept:" + _tmp_msgId);
+								 document.getElementById("acptBtn").value = val["ID"];
+
 							});
  						});
 					}
@@ -124,9 +129,9 @@
 					}
 				});
 			}
-			setInterval(getNewMsgFromDb,15000);
-			setInterval(getAllMsgFromDb,30000);
-			setInterval(getSentMsgFromDb,60000);
+			setInterval(getNewMsgFromDb,3000);
+			setInterval(getAllMsgFromDb,3000);
+			setInterval(getSentMsgFromDb,3000);
 
 
 			function badgeMsgCount(){ //Message badge counter function.
@@ -142,18 +147,18 @@
 			setInterval(badgeMsgCount,1000);
 
 
-			$("#acptBtn").click(function(ID){
-				var r = confirm("ID message is: " + ID);
+			$("#acptBtn").click(function(){
+				var r = confirm("Do you want to accept this message " + _tmp_msgId + "?");
 				if (r == true){
-					/*$.ajax({
-						url: "updateMsgStatus.php",
-						type: "POST",
+					$.ajax({
+						url: "updateMsgStatus.php?msgid=" + _tmp_msgId,
+						type: "GET",
 						data: ''
-					})*/
+					})
 					getNewMsgFromDb();
 					getAllMsgFromDb();
 					$("#newMsgModal").modal('hide');
-					alert("Accept successful");
+					alert("Accept Message Successful !!");
 				}
 			})
 
@@ -161,7 +166,7 @@
 	</script>
 </head>
 
-<body style="background-color:azure" id="top">
+<body style="background-color:azure">
 
 	
 
@@ -288,8 +293,8 @@
 	        	</div>
 
 	      		<div class="modal-footer">
-	      				<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-	        			<button id="acptBtn" type="button" class="btn btn-success" value="val['ID']">Accept</button>
+	      			<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+	        		<button id="acptBtn" type="button" class="btn btn-success">Accept</button>
 	      		</div>
 	    	</div>
 	    </div>
@@ -331,7 +336,6 @@
 	      			<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
 	        		<button type="button" class="btn btn-warning">Edit</button>
 	        		<button type="button" class="btn btn-danger">Delete</button>
-	        		
 	      		</div>
 	    	</div>
 	    </div>
